@@ -30,9 +30,9 @@ const FileUpload = () => {
     if (Number(count) > 50) {
       setErrorStr("ファイル名は50文字までで指定してください。");
       setSelectedImageName("");
+      return;
     } else {
       setSelectedNameCount(count);
-      setErrorStr("");
     }
   };
 
@@ -43,16 +43,29 @@ const FileUpload = () => {
       setErrorStr("10MB以上のファイルをアップロードすることはできません。");
       setSelectedImageName("");
       setSelectedNameCount("0");
+      return;
     } else {
       setSelectedFileSize(size.toString());
-      setErrorStr("");
+    }
+  };
+
+  // ファイル名に「¥ / : * ? " < > |」がないことを確認
+  const invalidString = (fileName: string) => {
+    // 禁止文字列
+    const forbiddenCharactersRegex = /[¥/:*?"<>|]/;
+    console.log(forbiddenCharactersRegex.test(fileName));
+    if (forbiddenCharactersRegex.test(fileName)) {
+      // 禁止文字列がファイル名に含まれる場合
+      setErrorStr('¥ / : * ? " < > | はファイル名に含めることはできません。');
+      return;
     }
   };
 
   // 選択したファイル格納
   const handleImageChange = (event: any) => {
+    // TODO: 複数ファイル選択できるようにする
     const file = event.target.files[0];
-    console.log(file);
+    console.log(file.name);
 
     // 選択時キャンセルした場合は処理を実施しない
     if (file === undefined) return;
@@ -60,6 +73,8 @@ const FileUpload = () => {
     // ファイル名の取得&格納
     const imageName = file.name;
     setSelectedImageName(imageName);
+    // ファイル名に不正な文字が含まれてないか確認
+    invalidString(imageName);
 
     // ファイル名文字数
     const fileNameCount = imageName.toString().length;
@@ -94,8 +109,7 @@ const FileUpload = () => {
       <hr />
       <h3>ファイル名の文字数(51文字以上はエラー)</h3>
       <label>文字数: {selectedNameCount}/50</label>
-      <br />
-      <br />
+      <h3>ファイルサイズ(10MBまで)</h3>
       <label>ファイルサイズ: {selectedFileSize}</label>
     </>
   );
