@@ -53,7 +53,6 @@ const FileUpload = () => {
   const invalidString = (fileName: string) => {
     // 禁止文字列
     const forbiddenCharactersRegex = /[¥/:*?"<>|]/;
-    console.log(forbiddenCharactersRegex.test(fileName));
     if (forbiddenCharactersRegex.test(fileName)) {
       // 禁止文字列がファイル名に含まれる場合
       setErrorStr('¥ / : * ? " < > | はファイル名に含めることはできません。');
@@ -93,13 +92,19 @@ const FileUpload = () => {
     <>
       <h2>ファイルのアップロード</h2>
       <form onSubmit={handleSubmit}>
-        <input type="file" accept="image/*" onChange={handleImageChange} />
+        <label htmlFor="file-uploader">Upload file:</label>
+        <input
+          id="file-uploader"
+          type="file"
+          accept="image/*"
+          onChange={handleImageChange}
+        />
         <br />
         <br />
         <button type="submit">Upload To AWS S3</button>
       </form>
       <hr />
-      ファイル名：
+      <label>ファイル名：</label>
       <input
         type="text"
         value={selectedImageName}
